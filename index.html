@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Museu das Eliminações — Seleção Brasileira</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700;800&family=Doto:wght@400..900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#070B14; --bg-2:#0B1120; --panel:#0E1525; --panel-line:#1B2740;
+    --ice:#E9EEF7; --muted:#7C88A2; --muted-2:#59647E;
+    --amarelo:#FFD400; --verde:#20C55E; --vermelho:#FF4646; --vermelho-esc:#B21E1E;
+    --flood: rgba(255,212,0,.10);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ice);font-family:'Archivo',system-ui,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+  .floodlight{position:fixed;top:-30vh;left:50%;transform:translateX(-50%);width:120vw;height:80vh;
+    background:radial-gradient(ellipse at center top, var(--flood) 0%, rgba(255,212,0,.03) 30%, transparent 62%);pointer-events:none;z-index:0}
+  .wrap{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:0 24px}
+
+  /* ---------- TOPO ---------- */
+  header.top{padding:60px 0 8px;text-align:center;position:relative}
+  .eyebrow{font-size:12px;letter-spacing:.42em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:22px}
+  .eyebrow b{color:var(--amarelo)}
+  h1{font-family:'Anton',sans-serif;font-weight:400;font-size:clamp(42px,9vw,104px);line-height:.92;text-transform:uppercase;letter-spacing:-.01em}
+  h1 .verde{color:var(--verde)} h1 .amarelo{color:var(--amarelo)}
+  .dek{max-width:640px;margin:26px auto 0;color:var(--muted);font-size:clamp(15px,2vw,17px)}
+
+  /* canarinho triste */
+  .mascote{width:clamp(120px,26vw,180px);height:auto;margin:34px auto 0;display:block}
+  .tear{transform-origin:center;animation:drip 3.2s ease-in infinite}
+  @keyframes drip{0%{transform:translateY(0);opacity:0}12%{opacity:1}45%{transform:translateY(26px);opacity:1}55%{transform:translateY(30px);opacity:0}100%{opacity:0}}
+  .flag-wave{transform-origin:left center;animation:wave 2.6s ease-in-out infinite}
+  @keyframes wave{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(3deg)}}
+
+  /* carimbo FEITO POR IA */
+  .stamp{
+    position:absolute;top:44px;right:8px;transform:rotate(-13deg);
+    border:3px solid var(--vermelho);color:var(--vermelho);border-radius:10px;
+    padding:8px 14px;font-family:'Anton',sans-serif;text-transform:uppercase;
+    line-height:1;text-align:center;opacity:.9;mix-blend-mode:screen;
+  }
+  .stamp b{display:block;font-size:22px;letter-spacing:.04em}
+  .stamp span{display:block;font-family:'Archivo';font-weight:800;font-size:9px;letter-spacing:.2em;margin-top:4px;color:var(--vermelho)}
+  @media (max-width:720px){.stamp{position:static;display:inline-block;margin:22px auto 0;transform:rotate(-4deg)}}
+
+  /* ---------- AVISO IA ---------- */
+  .disclaimer{
+    margin:40px 0 0;background:linear-gradient(180deg,#1A0E10,#12080A);
+    border:1px dashed var(--vermelho-esc);border-radius:14px;padding:24px 26px;
+    display:flex;gap:18px;align-items:flex-start;
+  }
+  .disclaimer .robo{font-size:34px;line-height:1;flex-shrink:0}
+  .disclaimer p{color:#E7C9C9;font-size:15.5px}
+  .disclaimer p b{color:var(--vermelho)}
+
+  /* ---------- PLACAR HERÓI ---------- */
+  .scoreboard{margin:30px 0;background:linear-gradient(180deg,var(--panel) 0%, #0A1120 100%);
+    border:1px solid var(--panel-line);border-radius:18px;
+    box-shadow:0 40px 120px -40px rgba(255,212,0,.18), inset 0 1px 0 rgba(255,255,255,.04);
+    padding:38px 28px 34px;text-align:center;position:relative;overflow:hidden;cursor:pointer}
+  .scoreboard::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg, rgba(255,255,255,.014) 0 1px, transparent 1px 3px);pointer-events:none}
+  .sb-label{font-size:12px;letter-spacing:.34em;text-transform:uppercase;color:var(--muted);font-weight:700}
+  .sb-label b{color:var(--ice)}
+  .counter{font-family:'Doto',monospace;font-weight:900;font-size:clamp(74px,20vw,190px);line-height:1;color:var(--amarelo);
+    letter-spacing:.02em;margin:14px 0 4px;text-shadow:0 0 26px rgba(255,212,0,.45), 0 0 4px rgba(255,212,0,.6);font-variant-numeric:tabular-nums}
+  .counter-unit{font-family:'Anton',sans-serif;font-size:clamp(18px,4vw,26px);text-transform:uppercase;letter-spacing:.14em;color:var(--ice)}
+  .clock{margin-top:20px;font-family:'Doto',monospace;font-weight:700;font-size:clamp(20px,5vw,30px);color:var(--verde);letter-spacing:.14em;text-shadow:0 0 16px rgba(32,197,94,.4);font-variant-numeric:tabular-nums}
+  .clock small{display:block;font-family:'Archivo',sans-serif;font-weight:600;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted-2);text-shadow:none;margin-top:8px}
+  .reset-note{margin-top:26px;padding-top:22px;border-top:1px solid var(--panel-line);color:var(--muted);font-size:14px;max-width:560px;margin-inline:auto}
+  .reset-note strong{color:var(--vermelho)}
+  .sb-toast{margin-top:16px;min-height:20px;font-weight:700;color:var(--amarelo);font-size:14px;opacity:0;transition:opacity .3s}
+  .sb-toast.on{opacity:1}
+  .shake{animation:shake .5s}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(4px)}}
+
+  /* ---------- GERADOR DE ZOAÇÃO ---------- */
+  .zoador{margin:8px 0 12px;background:var(--panel);border:1px solid var(--panel-line);border-radius:16px;padding:30px 28px;text-align:center}
+  .zoador .zt{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:14px}
+  .zoador .frase-zoacao{min-height:1.9em;display:flex;align-items:center;justify-content:center;width:100%;overflow:hidden;margin:0 auto}
+  .zoador .fz-text{font-family:'Anton',sans-serif;font-size:clamp(16px,3.4vw,30px);line-height:1.1;text-transform:uppercase;color:var(--ice);white-space:nowrap;display:inline-block}
+  .zoador .fz-text .hl{color:var(--amarelo)}
+  .btn{margin-top:22px;font-family:'Archivo';font-weight:800;font-size:14px;letter-spacing:.06em;text-transform:uppercase;
+    background:var(--amarelo);color:#111;border:none;border-radius:10px;padding:13px 24px;cursor:pointer;transition:transform .15s, box-shadow .2s}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 12px 30px -12px rgba(255,212,0,.7)}
+  .btn:active{transform:translateY(0)}
+  .btn:focus-visible{outline:3px solid var(--verde);outline-offset:3px}
+
+  /* ---------- ELIMINE VOCÊ TAMBÉM ---------- */
+  .eliminador{background:linear-gradient(180deg,#160B0D,#0C0709);border:1px solid var(--vermelho-esc);border-radius:18px;padding:34px 28px;text-align:center;box-shadow:0 30px 90px -50px rgba(255,70,70,.5)}
+  .el-result{min-height:126px;display:flex;flex-direction:column;justify-content:center;gap:10px}
+  .el-fase{font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);font-weight:700}
+  .el-placar{font-family:'Doto',monospace;font-weight:900;font-size:clamp(28px,7vw,56px);color:var(--vermelho);line-height:1;letter-spacing:.03em;text-shadow:0 0 22px rgba(255,70,70,.4)}
+  .el-flavor{font-family:'Anton',sans-serif;font-size:clamp(15px,3vw,22px);text-transform:uppercase;color:var(--ice);letter-spacing:.01em;max-width:34ch;margin:0 auto}
+  .btn-elim{background:var(--vermelho);color:#fff;margin-top:6px}
+  .btn-elim:hover{box-shadow:0 12px 30px -12px rgba(255,70,70,.8)}
+  .el-tally{margin-top:18px;min-height:20px;color:var(--amarelo);font-weight:700;font-size:14px}
+  .pop{animation:pop .35s cubic-bezier(.2,1.4,.4,1)}
+  @keyframes pop{0%{transform:scale(.72);opacity:0}100%{transform:scale(1);opacity:1}}
+
+  /* ---------- VERGONHA EM NÚMEROS ---------- */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:20px 0 12px}
+  .stat{background:var(--panel);border:1px solid var(--panel-line);border-radius:14px;padding:22px 16px;text-align:center}
+  .stat .num{font-family:'Doto',monospace;font-weight:900;font-size:clamp(30px,6vw,46px);color:var(--vermelho);line-height:1;text-shadow:0 0 18px rgba(255,70,70,.35)}
+  .stat .lbl{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.3}
+  @media (max-width:720px){.stats{grid-template-columns:repeat(2,1fr)}}
+
+  /* ---------- SEÇÕES ---------- */
+  section{padding:44px 0}
+  .sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:28px;flex-wrap:wrap}
+  .sec-head h2{font-family:'Anton',sans-serif;font-weight:400;font-size:clamp(28px,5vw,46px);text-transform:uppercase;letter-spacing:.005em}
+  .sec-head .count-tag{font-family:'Doto',monospace;font-weight:800;font-size:22px;color:var(--vermelho);border:1px solid var(--vermelho-esc);border-radius:8px;padding:3px 12px}
+  .sec-head p{color:var(--muted);font-size:15px;flex-basis:100%}
+
+  /* ---------- CARDS ---------- */
+  .grid{display:flex;flex-direction:column;gap:16px}
+  .elim{display:grid;grid-template-columns:64px 96px 1fr auto;gap:20px;align-items:center;
+    background:var(--panel);border:1px solid var(--panel-line);border-left:4px solid var(--vermelho-esc);
+    border-radius:14px;padding:22px 26px;transition:transform .35s cubic-bezier(.2,.7,.2,1), border-color .35s, background .35s}
+  .elim:hover{transform:translateX(6px);border-left-color:var(--vermelho);background:#10192C}
+  .elim .reacao{font-size:38px;line-height:1;text-align:center;filter:grayscale(.15)}
+  .elim .ano{font-family:'Doto',monospace;font-weight:900;font-size:34px;color:var(--muted);line-height:1;letter-spacing:.02em}
+  .elim:hover .ano{color:var(--vermelho)}
+  .elim .info .fase{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted-2);font-weight:700;margin-bottom:6px}
+  .elim .info .placar{font-family:'Anton',sans-serif;font-size:clamp(19px,3.4vw,25px);text-transform:uppercase;letter-spacing:.01em;margin-bottom:8px}
+  .elim .info .placar .gols{color:var(--vermelho);font-family:'Doto',monospace;font-weight:900}
+  .elim .info .comentario{color:var(--muted);font-size:14.5px;max-width:56ch}
+  .elim .local{text-align:right;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-2);font-weight:600;white-space:nowrap}
+  .elim .local b{display:block;color:var(--ice);font-family:'Doto',monospace;font-weight:800;letter-spacing:.05em;font-size:15px;margin-bottom:3px}
+  .elim.fresca{border-left-color:var(--vermelho);background:#12111C;box-shadow:0 20px 60px -30px rgba(255,70,70,.4)}
+  .elim.fresca .ano{color:var(--vermelho)}
+  .flag-nova{display:inline-block;font-family:'Archivo';font-weight:800;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--bg);background:var(--vermelho);padding:2px 8px;border-radius:5px;margin-bottom:8px}
+
+  /* ---------- ZEBRA ---------- */
+  .zebra{margin-top:8px;background:linear-gradient(135deg,#0C1A12 0%, #0A1120 100%);border:1px solid #17472B;border-left:4px solid var(--verde);
+    border-radius:16px;padding:34px 30px;position:relative;overflow:hidden}
+  .zebra .tag-zebra{display:inline-block;font-family:'Anton';font-size:13px;letter-spacing:.24em;text-transform:uppercase;color:var(--bg);background:var(--verde);padding:5px 12px;border-radius:6px;margin-bottom:16px}
+  .zebra h3{font-family:'Anton',sans-serif;font-weight:400;font-size:clamp(24px,4.5vw,38px);text-transform:uppercase;line-height:1;margin-bottom:6px}
+  .zebra .z-placar{font-family:'Doto',monospace;font-weight:900;color:var(--verde);font-size:26px;margin-bottom:14px;letter-spacing:.03em}
+  .zebra p{color:#B9C6BC;font-size:15.5px;max-width:64ch;position:relative;z-index:1}
+  .confete{position:absolute;top:-10px;width:9px;height:14px;opacity:.85;animation:cai linear infinite}
+  @keyframes cai{0%{transform:translateY(-20px) rotate(0);opacity:0}10%{opacity:.9}100%{transform:translateY(320px) rotate(540deg);opacity:0}}
+
+  /* ---------- RODAPÉ ---------- */
+  footer{padding:56px 0 80px;text-align:center;border-top:1px solid var(--panel-line);margin-top:40px}
+  footer .frase{font-family:'Anton',sans-serif;font-size:clamp(22px,4vw,34px);text-transform:uppercase;line-height:1.05;max-width:16ch;margin:0 auto 18px;color:var(--ice)}
+  footer .frase .amarelo{color:var(--amarelo)}
+  footer .sub{color:var(--muted);font-size:14px;max-width:56ch;margin:0 auto}
+  footer .ia-credito{margin-top:28px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-2);line-height:1.7}
+  footer .ia-credito b{color:var(--vermelho)}
+
+  .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1)}
+  .reveal.on{opacity:1;transform:none}
+
+  @media (max-width:640px){
+    .elim{grid-template-columns:48px 1fr;grid-template-areas:"reacao ano" "info info" "local local";gap:10px 14px}
+    .elim .reacao{grid-area:reacao;font-size:30px}
+    .elim .ano{grid-area:ano;font-size:26px;align-self:center}
+    .elim .info{grid-area:info} .elim .local{grid-area:local;text-align:left;margin-top:2px}
+    .elim .local b{display:inline;margin-right:8px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .reveal{opacity:1;transform:none;transition:none}
+    .tear,.flag-wave,.confete,.shake,.vela .chama{animation:none}
+    html{scroll-behavior:auto}
+  }
+
+  /* ===== LOJA DO MUSEU ===== */
+  .loja-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .produto{background:var(--panel);border:1px solid var(--panel-line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;transition:transform .3s, border-color .3s}
+  .produto:hover{transform:translateY(-4px);border-color:var(--amarelo)}
+  .produto .foto{position:relative;aspect-ratio:1/1;background:#0a0f1c;overflow:hidden}
+  .produto .foto img{width:100%;height:100%;object-fit:cover;display:block}
+  .produto .sel{position:absolute;top:10px;left:10px;background:var(--vermelho);color:#fff;font-family:'Archivo';font-weight:800;font-size:10px;letter-spacing:.14em;text-transform:uppercase;padding:3px 8px;border-radius:5px}
+  .produto .corpo{padding:16px 16px 18px;display:flex;flex-direction:column;gap:9px;flex:1}
+  .produto .nome{font-family:'Anton',sans-serif;font-size:17px;text-transform:uppercase;line-height:1.05}
+  .produto .desc{color:var(--muted);font-size:13px;flex:1;line-height:1.45}
+  .produto .preco{display:flex;align-items:baseline;gap:8px}
+  .produto .preco .de{color:var(--muted-2);text-decoration:line-through;font-size:13px}
+  .produto .preco .por{color:var(--amarelo);font-family:'Doto',monospace;font-weight:900;font-size:19px}
+  .produto .add{margin-top:2px;font-family:'Archivo';font-weight:700;font-size:12px;letter-spacing:.04em;text-transform:uppercase;background:transparent;color:var(--ice);border:1px solid var(--panel-line);border-radius:8px;padding:10px;cursor:pointer;transition:background .2s,border-color .2s}
+  .produto .add:hover{border-color:var(--amarelo);background:rgba(255,212,0,.06)}
+  .produto .add:focus-visible{outline:2px solid var(--verde);outline-offset:2px}
+  @media (max-width:900px){.loja-grid{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:520px){.loja-grid{grid-template-columns:1fr}}
+
+  /* ===== MURAL DE VELAS ===== */
+  .mural{background:var(--panel);border:1px solid var(--panel-line);border-radius:16px;padding:30px 26px}
+  .mural-top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+  .mural-top .contagem{font-family:'Archivo';font-weight:700;color:var(--muted);font-size:14px}
+  .mural-top .contagem b{font-family:'Doto',monospace;font-weight:900;color:var(--amarelo);font-size:22px;margin-right:4px}
+  .velas{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-bottom:8px;min-height:60px}
+  .vela .chama{transform-origin:center bottom;animation:tremeluz 1.6s ease-in-out infinite}
+  .vela:nth-child(3n) .chama{animation-duration:2s}
+  .vela:nth-child(4n) .chama{animation-duration:1.3s}
+  @keyframes tremeluz{0%,100%{transform:scale(1) translateY(0);opacity:1}50%{transform:scale(.9,1.1) translateY(-1px);opacity:.82}}
+  .mural-toast{text-align:center;min-height:20px;color:var(--verde);font-weight:700;font-size:14px;margin-top:6px}
+  .recados{margin-top:22px;display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  .recado{background:#0a0f1c;border:1px solid var(--panel-line);border-radius:10px;padding:14px 16px}
+  .recado p{color:#cdd6e6;font-size:14px;font-style:italic;line-height:1.45}
+  .recado span{display:block;margin-top:8px;color:var(--muted-2);font-size:12px;text-transform:uppercase;letter-spacing:.1em;font-style:normal}
+  .mural-form{margin-top:16px;display:flex;gap:10px;flex-wrap:wrap}
+  .mural-form input{flex:1;min-width:200px;background:#0a0f1c;border:1px solid var(--panel-line);border-radius:8px;padding:12px 14px;color:var(--ice);font-family:'Archivo';font-size:14px}
+  .mural-form input:focus{outline:none;border-color:var(--amarelo)}
+  @media (max-width:640px){.recados{grid-template-columns:1fr}}
+
+  /* ===== CRONÔMETRO REVERSO ===== */
+  .regressiva{background:linear-gradient(180deg,#0E1525,#0A1120);border:1px solid var(--panel-line);border-radius:18px;padding:34px 26px;text-align:center;position:relative;overflow:hidden}
+  .regressiva::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg, rgba(255,255,255,.014) 0 1px, transparent 1px 3px);pointer-events:none}
+  .regressiva .rlabel{font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);font-weight:700}
+  .regressiva .rlabel b{color:var(--ice)}
+  .reg-clock{display:flex;justify-content:center;gap:12px;margin:20px 0 8px;flex-wrap:wrap}
+  .reg-bloco{min-width:72px}
+  .reg-num{font-family:'Doto',monospace;font-weight:900;font-size:clamp(34px,9vw,60px);color:var(--amarelo);line-height:1;text-shadow:0 0 22px rgba(255,212,0,.4);font-variant-numeric:tabular-nums}
+  .reg-uni{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted-2);margin-top:6px}
+  .reg-sub{color:var(--muted);font-size:13px;margin-top:10px}
+  .esperanca{max-width:420px;margin:22px auto 0}
+  .esperanca .etop{display:flex;justify-content:space-between;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-2);margin-bottom:8px}
+  .esperanca .barra{height:12px;border-radius:8px;background:#0a0f1c;border:1px solid var(--panel-line);overflow:hidden}
+  .esperanca .fill{height:100%;width:4%;background:linear-gradient(90deg,var(--verde),var(--amarelo));border-radius:8px}
+</style>
+</head>
+<body>
+<div class="floodlight"></div>
+<div class="wrap">
+
+  <header class="top">
+    <div class="stamp"><b>Feito<br>por IA</b><span>nenhum humano se voluntariou</span></div>
+    <div class="eyebrow">Acervo permanente · <b>desde 2002</b></div>
+    <h1>Museu das<br><span class="amarelo">Eliminações</span> da<br><span class="verde">Seleção</span></h1>
+    <p class="dek">Um memorial honesto de tudo que deu errado com o Brasil na Copa do Mundo e na Copa América desde o penta. Entrada gratuita, saída pelos pênaltis.</p>
+
+    <!-- Canarinho triste de bandeira branca (ilustração original) -->
+    <svg class="mascote" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Canarinho triste com bandeira branca">
+      <ellipse cx="100" cy="130" rx="52" ry="46" fill="#FFD400"/>
+      <ellipse cx="118" cy="128" rx="30" ry="34" fill="#F2C200"/>
+      <circle cx="86" cy="70" r="40" fill="#FFD400"/>
+      <path d="M70 62 q-4 -30 12 -34" fill="none" stroke="#FFD400" stroke-width="9" stroke-linecap="round"/>
+      <circle cx="78" cy="66" r="9" fill="#fff"/>
+      <circle cx="80" cy="68" r="4.5" fill="#12202f"/>
+      <path d="M60 84 l-22 8 l22 8 z" fill="#F08A24"/>
+      <path d="M78 90 q8 5 16 0" fill="none" stroke="#C46A12" stroke-width="3" stroke-linecap="round"/>
+      <path class="tear" d="M74 78 q4 8 0 12 q-4 -4 0 -12z" fill="#7FD7FF"/>
+      <path d="M96 150 l6 22 M112 150 l4 22" stroke="#F08A24" stroke-width="7" stroke-linecap="round"/>
+      <g class="flag-wave">
+        <line x1="150" y1="60" x2="150" y2="150" stroke="#8792A6" stroke-width="5"/>
+        <path d="M150 62 l40 6 l-40 22 z" fill="#F3F6FB" stroke="#D5DCE8" stroke-width="1.5"/>
+      </g>
+    </svg>
+  </header>
+
+  <!-- AVISO IA -->
+  <div class="disclaimer reveal">
+    <div class="robo">🤖</div>
+    <p>Aviso de transparência: este site foi <b>feito 100% por inteligência artificial</b>. Nenhum ser humano foi obrigado a reviver essas eliminações manualmente, e sinceramente a seleção não andava merecendo o esforço de um programador de verdade. A IA fez de graça, sem torcer, sem sofrer — do jeito que essas quedas pedem.</p>
+  </div>
+
+  <!-- CONTADOR -->
+  <div class="scoreboard" id="scoreboard">
+    <div class="sb-label">O Brasil está sem ser eliminado numa <b>Copa do Mundo</b> há</div>
+    <div class="counter" id="dias">—</div>
+    <div class="counter-unit">dias</div>
+    <div class="clock"><span id="relogio">--:--:--</span><small>e o cronômetro continua correndo</small></div>
+    <div class="sb-toast" id="sbToast"></div>
+    <div class="reset-note">
+      O contador foi zerado pela <strong>Noruega</strong> no dia 5 de julho de 2026, nas oitavas de final. Durou o que durou. É a única peça deste museu que se atualiza sozinha — clica nela pra ver se volta no tempo (spoiler: não volta).
+    </div>
+  </div>
+
+  <!-- GERADOR DE ZOAÇÃO -->
+  <div class="zoador reveal">
+    <div class="zt">Precisando descontar? Aperta o botão</div>
+    <div class="frase-zoacao"><span class="fz-text" id="fraseZoacao">Aperta o botão. A IA fala o que dói.</span></div>
+    <button class="btn" id="btnZoar">Me zoa de novo</button>
+  </div>
+
+  <!-- VERGONHA EM NÚMEROS -->
+  <div class="stats reveal">
+    <div class="stat"><div class="num">11</div><div class="lbl">eliminações no acervo desde 2002</div></div>
+    <div class="stat"><div class="num">7</div><div class="lbl">gols tomados num jogo só, em casa</div></div>
+    <div class="stat"><div class="num">4</div><div class="lbl">pênaltis perdidos numa cobrança só, em 2011</div></div>
+    <div class="stat"><div class="num">24</div><div class="lbl">anos sem eliminar um europeu em Copa</div></div>
+  </div>
+
+  <!-- COPA DO MUNDO -->
+  <section id="copa-do-mundo">
+    <div class="sec-head reveal">
+      <h2>Copa do Mundo</h2>
+      <span class="count-tag">6 quedas</span>
+      <p>Depois do título de 2002, cada Mundial virou uma nova forma de aprender a perder. A cronologia fala por si.</p>
+    </div>
+    <div class="grid">
+
+      <div class="elim fresca reveal">
+        <div class="reacao">🥶</div>
+        <div class="ano">2026</div>
+        <div class="info">
+          <span class="flag-nova">Peça mais recente</span>
+          <div class="fase">Oitavas de final</div>
+          <div class="placar">Brasil <span class="gols">1×2</span> Noruega</div>
+          <div class="comentario">Haaland fez os dois, o Bruno Guimarães ainda desperdiçou um pênalti antes, e o Neymar só descontou nos acréscimos, quando já não adiantava. Pela primeira vez desde o penta, o Brasil caiu antes das quartas — a pior campanha em Mundiais desde 1990.</div>
+        </div>
+        <div class="local"><b>EUA · CAN · MÉX</b>05 jul 2026</div>
+      </div>
+
+      <div class="elim reveal">
+        <div class="reacao">💃</div>
+        <div class="ano">2022</div>
+        <div class="info">
+          <div class="fase">Quartas de final</div>
+          <div class="placar">Brasil <span class="gols">1×1</span> Croácia <span class="gols">(2×4 pên)</span></div>
+          <div class="comentario">Fizemos o gol na prorrogação, saímos comemorando cedo demais, e a Croácia empatou no fim para levar nos pênaltis. A história de sempre, agora com dança na hora errada.</div>
+        </div>
+        <div class="local"><b>Catar</b>09 dez 2022</div>
+      </div>
+
+      <div class="elim reveal">
+        <div class="reacao">🧱</div>
+        <div class="ano">2018</div>
+        <div class="info">
+          <div class="fase">Quartas de final</div>
+          <div class="placar">Brasil <span class="gols">1×2</span> Bélgica</div>
+          <div class="comentario">A Bélgica jogou no contra-ataque com precisão cirúrgica e o Brasil bateu na trave, no goleiro e na zaga o jogo inteiro sem conseguir furar. Saímos merecendo mais, o que não muda o placar.</div>
+        </div>
+        <div class="local"><b>Rússia</b>06 jul 2018</div>
+      </div>
+
+      <div class="elim reveal">
+        <div class="reacao">💀</div>
+        <div class="ano">2014</div>
+        <div class="info">
+          <div class="fase">Semifinal · em casa</div>
+          <div class="placar">Brasil <span class="gols">1×7</span> Alemanha</div>
+          <div class="comentario">Não há muito a comentar sobre um sete a um dentro de casa. É a peça central deste museu, aquela em frente à qual todo mundo para em silêncio. O Mineiraço dispensa legenda.</div>
+        </div>
+        <div class="local"><b>Brasil</b>08 jul 2014</div>
+      </div>
+
+      <div class="elim reveal">
+        <div class="reacao">🤯</div>
+        <div class="ano">2010</div>
+        <div class="info">
+          <div class="fase">Quartas de final</div>
+          <div class="placar">Brasil <span class="gols">1×2</span> Holanda</div>
+          <div class="comentario">Estávamos ganhando, controlando, com um pé na semifinal — até a Holanda virar em dez minutos e o time inteiro perder a cabeça junto. Um daqueles jogos que a gente joga fora sozinho.</div>
+        </div>
+        <div class="local"><b>África do Sul</b>02 jul 2010</div>
+      </div>
+
+      <div class="elim reveal">
+        <div class="reacao">🎩</div>
+        <div class="ano">2006</div>
+        <div class="info">
+          <div class="fase">Quartas de final</div>
+          <div class="placar">Brasil <span class="gols">0×1</span> França</div>
+          <div class="comentario">O Zidane resolveu dar uma última aula de futebol antes de se aposentar e escolheu justamente a gente como plateia. Um gol do Henry bastou para encerrar a era dos craques do penta.</div>
+        </div>
+        <div class="local"><b>Alemanha</b>01 jul 2006</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- COPA AMÉRICA -->
+  <section id="copa-america">
+    <div class="sec-head reveal">
+      <h2>Copa América</h2>
+      <span class="count-tag">5 quedas</span>
+      <p>O torneio que era pra ser o mais fácil virou uma coleção própria de pênaltis perdidos e gols de mão. Com uma exceção gloriosa que ganhou sala só dela, logo abaixo.</p>
+    </div>
+    <div class="grid">
+
+      <div class="elim reveal">
+        <div class="reacao">🥅</div>
+        <div class="ano">2024</div>
+        <div class="info">
+          <div class="fase">Quartas de final</div>
+          <div class="placar">Brasil <span class="gols">0×0</span> Uruguai <span class="gols">(2×4 pên)</span></div>
+          <div class="comentario">Mais uma queda nos pênaltis, dessa vez para o Uruguai, sem sequer conseguir marcar no tempo normal. A essa altura, cair nas quartas nos pênaltis já parece parte do regulamento.</div>
+        </div>
+        <div class="local"><b>EUA</b>06 jul 2024</div>
+      </div>
+
+      <div class="elim reveal">
+        <div class="reacao">🥲</div>
+        <div class="ano">2021</div>
+        <div class="info">
+          <div class="fase">Final · vice-campeão · em casa</div>
+          <div class="placar">Brasil <span class="gols">0×1</span> Argentina</div>
+          <div class="comentario">Em casa, no Maracanã, numa final contra a Argentina — e o Di María resolveu cavar um cavadinha por cima do Ederson. Foi ali que o Messi finalmente levantou uma taça na nossa frente, no lugar que mais dói.</div>
+        </div>
+        <div class="local"><b>Brasil</b>10 jul 2021</div>
+      </div>
+
+      <div class="elim reveal">
+        <div class="reacao">✋</div>
+        <div class="ano">2016</div>
+        <div class="info">
+          <div class="fase">Fase de grupos</div>
+          <div class="placar">Brasil <span class="gols">0×1</span> Peru</div>
+          <div class="comentario">Caímos ainda na primeira fase da edição do Centenário, e o gol que nos eliminou saiu literalmente da mão do Ruidíaz. O VAR ainda não tinha chegado ao futebol, e a gente foi embora pra casa engolindo a mão de Deus versão peruana.</div>
+        </div>
+        <div class="local"><b>EUA · Centenário</b>12 jun 2016</div>
+      </div>
+
+      <div class="elim reveal">
+        <div class="reacao">🔁</div>
+        <div class="ano">2015</div>
+        <div class="info">
+          <div class="fase">Quartas de final</div>
+          <div class="placar">Brasil <span class="gols">1×1</span> Paraguai <span class="gols">(3×4 pên)</span></div>
+          <div class="comentario">De novo o Paraguai, de novo nas quartas, de novo nos pênaltis. Quando o roteiro se repete assim tão certinho, já não dá pra chamar de azar — virou uma relação complicada.</div>
+        </div>
+        <div class="local"><b>Chile</b>27 jun 2015</div>
+      </div>
+
+      <div class="elim reveal">
+        <div class="reacao">😵</div>
+        <div class="ano">2011</div>
+        <div class="info">
+          <div class="fase">Quartas de final</div>
+          <div class="placar">Brasil <span class="gols">0×0</span> Paraguai <span class="gols">(0×2 pên)</span></div>
+          <div class="comentario">O Brasil bateu quatro pênaltis e perdeu os quatro, um atrás do outro, num daqueles vexames que a gente prefere fingir que nunca assistiu. O Paraguai nem precisou se esforçar para nos eliminar.</div>
+        </div>
+        <div class="local"><b>Argentina</b>17 jul 2011</div>
+      </div>
+
+    </div>
+
+    <!-- A ZEBRA -->
+    <div class="zebra reveal" id="zebra">
+      <span class="tag-zebra">⚠ Zebra histórica · 2019</span>
+      <h3>O Brasil ganhou alguma coisa</h3>
+      <div class="z-placar">Brasil 3×1 Peru · Campeão 🏆</div>
+      <p>Registrada em cartório e exposta aqui como a maior anomalia de todo o acervo: em 2019, contra todo o retrospecto recente e contra tudo o que este museu documenta, o Brasil fez o impensável e levantou uma taça. Foi em casa, sobre o Peru, com direito a volta olímpica e tudo. Um evento tão raro dentro deste período que a curadoria não teve dúvida — merecia sala própria, iluminação especial e uma placa avisando que sim, aconteceu mesmo, você não sonhou.</p>
+    </div>
+  </section>
+
+  <!-- ELIMINE VOCÊ TAMBÉM -->
+  <section id="elimine-voce">
+    <div class="sec-head reveal">
+      <h2>Elimine você também</h2>
+      <span class="count-tag" id="suasElim">0</span>
+      <p>Reparou que o seu nome não está na lista aí de cima? Injustiça pura, porque hoje qualquer um elimina essa seleção sem esforço — inclusive você, agora, do sofá, sem nem tirar as mãos do celular. Faz a sua parte.</p>
+    </div>
+    <div class="eliminador reveal">
+      <div class="el-result" id="elResult">
+        <div class="el-fase" id="elFase">A seleção já está pré-eliminada por conveniência.</div>
+        <div class="el-placar" id="elPlacar">VOCÊ &nbsp;×&nbsp; BRASIL</div>
+        <div class="el-flavor" id="elFlavor">Aperte o botão. É mais fácil do que parece — e já parece bem fácil.</div>
+      </div>
+      <button class="btn btn-elim" id="btnEliminar">Eliminar o Brasil</button>
+      <div class="el-tally" id="elTally"></div>
+    </div>
+  </section>
+
+  <!-- LOJA DO MUSEU -->
+  <!-- IMAGENS: geradas no Higgsfield e servidas pela CDN. Para o WordPress, baixe cada uma, suba na Biblioteca de Mídia e troque o src abaixo pela URL do seu site. -->
+  <section id="loja">
+    <div class="sec-head reveal">
+      <h2>Loja do museu</h2>
+      <span class="count-tag">R$ 0</span>
+      <p>Todo museu tem sua lojinha de souvenir, e a nossa é assim: produtos que ninguém pediu, com preço riscado e um estoque que não sai nem de graça. Leve a sua mágoa pra casa em forma de brinde.</p>
+    </div>
+    <div class="loja-grid">
+      <div class="produto reveal">
+        <div class="foto"><span class="sel">Encalhado</span><img src="/img/caneca-do-sete-a-um.png" alt="Caneca preta com o placar 7 x 1 em amarelo"></div>
+        <div class="corpo">
+          <div class="nome">Caneca do trauma</div>
+          <div class="desc">Tome seu café lembrando do placar que o mundo inteiro já lembra por você. Louça resistente; a autoestima, nem tanto.</div>
+          <div class="preco"><span class="de">R$ 69</span><span class="por">GRÁTIS</span></div>
+          <button class="add">Adicionar ao carrinho</button>
+        </div>
+      </div>
+      <div class="produto reveal">
+        <div class="foto"><span class="sel">Encalhado</span><img src="/img/camiseta-2014.png" alt="Camiseta preta escrito Eu sobrevivi a 2014"></div>
+        <div class="corpo">
+          <div class="nome">Camiseta sobrevivente</div>
+          <div class="desc">A estampa "Eu sobrevivi a 2014" é a prova de que você estava lá e aguentou firme. Serve de pijama para as próximas Copas.</div>
+          <div class="preco"><span class="de">R$ 89</span><span class="por">GRÁTIS</span></div>
+          <button class="add">Adicionar ao carrinho</button>
+        </div>
+      </div>
+      <div class="produto reveal">
+        <div class="foto"><span class="sel">Encalhado</span><img src="/img/museu-eliminacoes.png" alt="Ecobag preta escrito Museu das Eliminações"></div>
+        <div class="corpo">
+          <div class="nome">Ecobag oficial</div>
+          <div class="desc">Carregue as compras e a mágoa no mesmo lugar. Sustentável, ao contrário da nossa marcação no meio-campo.</div>
+          <div class="preco"><span class="de">R$ 59</span><span class="por">GRÁTIS</span></div>
+          <button class="add">Adicionar ao carrinho</button>
+        </div>
+      </div>
+      <div class="produto reveal">
+        <div class="foto"><span class="sel">Encalhado</span><img src="/img/chaveiro.png" alt="Chaveiro em formato de bandeira branca"></div>
+        <div class="corpo">
+          <div class="nome">Chaveiro bandeira branca</div>
+          <div class="desc">Já vem no clima de entrega, pronto pra próxima fase eliminatória. Rendição inclusa direto de fábrica.</div>
+          <div class="preco"><span class="de">R$ 29</span><span class="por">GRÁTIS</span></div>
+          <button class="add">Adicionar ao carrinho</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MURAL DE VELAS -->
+  <section id="mural-sec">
+    <div class="sec-head reveal">
+      <h2>Mural de condolências</h2>
+      <span class="count-tag" id="velasTag">24</span>
+      <p>Acenda uma vela pela Seleção, deixe seus pêsames e siga em frente como todo torcedor aprende a fazer. As velas, garantimos, duram bem mais que as nossas campanhas.</p>
+    </div>
+    <div class="mural reveal">
+      <div class="mural-top">
+        <div class="contagem"><b id="velasCount">24</b> velas acesas neste velório</div>
+        <button class="btn" id="btnVela">Acender uma vela</button>
+      </div>
+      <div class="velas" id="velasGrid"></div>
+      <div class="mural-toast" id="velaToast"></div>
+      <div class="recados" id="recados">
+        <div class="recado"><p>"Descanse em paz, esperança. Você lutou bravamente até as oitavas."</p><span>— Anônimo</span></div>
+        <div class="recado"><p>"Meus sentimentos. De novo. Como em toda Copa que a gente resolve acreditar."</p><span>— Um torcedor cansado</span></div>
+        <div class="recado"><p>"Força. A Noruega que se cuide no velório, ainda deve estar comemorando."</p><span>— Zé do bar</span></div>
+        <div class="recado"><p>"Que a terra lhe seja leve, assim como foi a nossa marcação em cima do Haaland."</p><span>— Marcos</span></div>
+      </div>
+      <div class="mural-form">
+        <input id="recadoInput" maxlength="80" placeholder="Deixe seu pêsame (ou sua zoação)..." aria-label="Deixe seu recado">
+        <button class="btn" id="btnRecado">Deixar recado</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- CRONÔMETRO REVERSO -->
+  <section id="regressiva-sec">
+    <div class="sec-head reveal">
+      <h2>Próxima decepção</h2>
+      <p>Pra que olhar só pra trás? Este cronômetro conta o tempo que ainda falta para a próxima chance de sofrer, a Copa do Mundo de 2030. A esperança enche quando o torneio chega e esvazia na hora exata, como todo torcedor já sabe de cor.</p>
+    </div>
+    <div class="regressiva reveal">
+      <div class="rlabel">Faltam para a <b>Copa do Mundo 2030</b></div>
+      <div class="reg-clock">
+        <div class="reg-bloco"><div class="reg-num" id="rDias">--</div><div class="reg-uni">dias</div></div>
+        <div class="reg-bloco"><div class="reg-num" id="rHoras">--</div><div class="reg-uni">horas</div></div>
+        <div class="reg-bloco"><div class="reg-num" id="rMin">--</div><div class="reg-uni">min</div></div>
+        <div class="reg-bloco"><div class="reg-num" id="rSeg">--</div><div class="reg-uni">seg</div></div>
+      </div>
+      <div class="reg-sub">*data estimada de abertura. O sofrimento, esse, é confirmadíssimo.</div>
+      <div class="esperanca">
+        <div class="etop"><span>Medidor de esperança</span><span>4%</span></div>
+        <div class="barra"><div class="fill"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="frase">O acervo <span class="amarelo">continua crescendo</span></div>
+    <p class="sub">Este museu se atualiza sozinho sempre que uma seleção qualquer resolve nos mandar pra casa. Espera-se que a próxima aquisição demore — mas a esperança, como se sabe, é a última que morre nos pênaltis.</p>
+    <div class="ia-credito">Curadoria, texto e ilustrações: <b>uma inteligência artificial</b><br>que não torce, não sofre e não cobra pênalti</div>
+  </footer>
+
+</div>
+
+<script>
+  /* ---------- CONTADOR ---------- */
+  var ULTIMA_ELIMINACAO = new Date(2026, 6, 5, 0, 0, 0); // 05/07/2026, Noruega (mês 6 = julho)
+  function pad(n){ return String(n).padStart(2,'0'); }
+  function atualizar(){
+    var agora = new Date();
+    var diff = agora - ULTIMA_ELIMINACAO; if(diff < 0) diff = 0;
+    var t = Math.floor(diff/1000);
+    var dias = Math.floor(t/86400), h = Math.floor((t%86400)/3600), m = Math.floor((t%3600)/60), s = t%60;
+    document.getElementById('dias').textContent = String(dias).padStart(5,'0');
+    document.getElementById('relogio').textContent = pad(h)+':'+pad(m)+':'+pad(s);
+  }
+  atualizar(); setInterval(atualizar, 1000);
+
+  /* ---------- CLIQUE NO PLACAR ---------- */
+  var sbFrases = [
+    'Não adianta clicar. O tempo não volta e a Noruega não devolve.',
+    'Você clicou. O placar tremeu. Continuamos eliminados.',
+    'Se clicar mais forte não muda o resultado, campeão.',
+    'O único botão que não resolve nada — igual à nossa defesa em 2014.'
+  ];
+  var sb = document.getElementById('scoreboard');
+  var sbToast = document.getElementById('sbToast');
+  var sbI = 0, sbTimer;
+  sb.addEventListener('click', function(){
+    sb.classList.remove('shake'); void sb.offsetWidth; sb.classList.add('shake');
+    sbToast.textContent = sbFrases[sbI % sbFrases.length]; sbI++;
+    sbToast.classList.add('on');
+    clearTimeout(sbTimer);
+    sbTimer = setTimeout(function(){ sbToast.classList.remove('on'); }, 3200);
+  });
+
+  /* ---------- GERADOR DE ZOAÇÃO ---------- */
+  var zoacoes = [
+    'Somos <span class="hl">hexacampeões</span> de sair nas quartas.',
+    'Erramos <span class="hl">quatro pênaltis</span> seguidos. Talento, 2011.',
+    '24 anos sem passar por um <span class="hl">europeu</span> em Copa.',
+    'Paraguai e Uruguai têm a <span class="hl">chave da nossa casa</span> nos pênaltis.',
+    'Ganhamos a Copa de 2019 e ninguém explica como. <span class="hl">Zebra.</span>',
+    'Nunca vencemos a <span class="hl">Noruega</span>. Ela lembrou disso no Mundial.',
+    'Neymar sempre desconta. <span class="hl">Nos acréscimos.</span> Tarde demais.',
+    'O Mineiraço não foi o fundo do poço. <span class="hl">Tinha porão.</span>',
+    'Boa notícia: o contador <span class="hl">zerou.</span> Má: você sabe por quê.',
+    'Mais <span class="hl">eliminações que títulos</span> desde 2002. A conta não fecha.',
+    'Já perdemos de 7. Depois disso, tudo é <span class="hl">lucro emocional.</span>',
+    'Toda Copa vira <span class="hl">acervo novo</span> pra este museu.',
+    'Impossível a gente encara. <span class="hl">"Semifinal"</span> é que anda difícil.',
+    'Feito por IA porque nem <span class="hl">robô</span> merece torcer pra isso.'
+  ];
+  var alvo = document.getElementById('fraseZoacao');
+  var btnZoar = document.getElementById('btnZoar');
+  var ultima = -1;
+  function fitUmaLinha(el){
+    el.style.fontSize = '';
+    var avail = el.parentElement.clientWidth - 6;
+    var largura = el.scrollWidth;
+    if(largura > avail && largura > 0){
+      var base = parseFloat(getComputedStyle(el).fontSize);
+      el.style.fontSize = Math.max(12, Math.floor(base * avail / largura)) + 'px';
+    }
+  }
+  function zoar(){
+    var i; do { i = Math.floor(Math.random()*zoacoes.length); } while(i === ultima && zoacoes.length > 1);
+    ultima = i;
+    alvo.style.opacity = 0;
+    setTimeout(function(){
+      alvo.innerHTML = zoacoes[i];
+      fitUmaLinha(alvo);
+      alvo.style.opacity = 1;
+    }, 140);
+  }
+  alvo.style.transition = 'opacity .14s ease';
+  btnZoar.addEventListener('click', zoar);
+  fitUmaLinha(alvo);
+  window.addEventListener('resize', function(){ fitUmaLinha(alvo); });
+  if(document.fonts && document.fonts.ready){ document.fonts.ready.then(function(){ fitUmaLinha(alvo); }); }
+
+  /* ---------- ELIMINE VOCÊ TAMBÉM ---------- */
+  var elPlacares = ['VOCÊ 2×1 BRASIL','VOCÊ 3×0 BRASIL','VOCÊ 1×0 BRASIL','VOCÊ 4×1 BRASIL','VOCÊ 7×1 BRASIL','VOCÊ 2×0 BRASIL','VOCÊ 5×2 BRASIL','VOCÊ 0×0 BRASIL (5×4 pên)','VOCÊ 3×1 BRASIL'];
+  var elFases = ['nas oitavas de final','nas quartas — a tradição','nos pênaltis, claro','ainda na fase de grupos','num amistoso que nem valia ponto','antes mesmo do intervalo','logo no primeiro tempo'];
+  var elFlavors = ['Nem suou.','De olhos fechados.','Direto do sofá, sem levantar.','Sem tirar as mãos do celular.','Foi mais fácil que carregar este site.','Você nem comemorou, de tão fácil.','O Brasil agradece a chance de perder de novo.','Fez por obrigação, não por vontade.','A IA nem precisou ajudar dessa vez.'];
+  var elFaseEl = document.getElementById('elFase');
+  var elPlacarEl = document.getElementById('elPlacar');
+  var elFlavorEl = document.getElementById('elFlavor');
+  var elTallyEl = document.getElementById('elTally');
+  var elCountTag = document.getElementById('suasElim');
+  var elResultEl = document.getElementById('elResult');
+  var vezes = 0;
+  function rand(a){ return a[Math.floor(Math.random()*a.length)]; }
+  function eliminar(){
+    vezes++;
+    elFaseEl.textContent = 'Brasil eliminado ' + rand(elFases);
+    elPlacarEl.textContent = rand(elPlacares);
+    elFlavorEl.textContent = rand(elFlavors);
+    elCountTag.textContent = vezes;
+    elResultEl.classList.remove('pop'); void elResultEl.offsetWidth; elResultEl.classList.add('pop');
+    var msg;
+    if(vezes === 1) msg = 'Pronto. Você já eliminou o Brasil 1 vez. Bem-vindo ao clube — que é enorme.';
+    else if(vezes === 7) msg = 'Sete eliminações. Você acabou de empatar com a Alemanha de 2014.';
+    else if(vezes === 10) msg = 'Dez vezes. Já dá pra você abrir o seu próprio museu.';
+    else if(vezes >= 20) msg = vezes + ' eliminações. Isso já virou perseguição pessoal.';
+    else msg = 'Você já eliminou o Brasil ' + vezes + ' vezes. Sem esforço, como todo mundo.';
+    elTallyEl.textContent = msg;
+  }
+  document.getElementById('btnEliminar').addEventListener('click', eliminar);
+
+  /* ---------- CONFETE NA ZEBRA ---------- */
+  (function(){
+    var z = document.getElementById('zebra');
+    var cores = ['#20C55E','#FFD400','#7FD7FF','#FF4646','#E9EEF7'];
+    for(var i=0;i<26;i++){
+      var c = document.createElement('div');
+      c.className = 'confete';
+      c.style.left = (Math.random()*100)+'%';
+      c.style.background = cores[i % cores.length];
+      c.style.animationDuration = (2.6 + Math.random()*2.4)+'s';
+      c.style.animationDelay = (Math.random()*3)+'s';
+      z.appendChild(c);
+    }
+  })();
+
+  /* ---------- LOJA DO MUSEU ---------- */
+  (function(){
+    var gags = ['Esgotou o estoque de dignidade.','Adicionado ao carrinho do arrependimento.','Ninguém quis. Nem de graça.','Frete grátis pra tudo, menos pra semifinal.','Indisponível: igual à nossa defesa.'];
+    var gi = 0;
+    document.querySelectorAll('.produto .add').forEach(function(b){
+      var original = b.textContent;
+      b.addEventListener('click', function(){
+        b.textContent = gags[gi % gags.length]; gi++;
+        clearTimeout(b._t); b._t = setTimeout(function(){ b.textContent = original; }, 2600);
+      });
+    });
+  })();
+
+  /* ---------- MURAL DE VELAS ---------- */
+  (function(){
+    var grid = document.getElementById('velasGrid');
+    var count = document.getElementById('velasCount');
+    var tag = document.getElementById('velasTag');
+    var toast = document.getElementById('velaToast');
+    var btn = document.getElementById('btnVela');
+    var svg = '<div class="vela"><svg width="24" height="42" viewBox="0 0 24 42" xmlns="http://www.w3.org/2000/svg"><ellipse class="chama" cx="12" cy="8" rx="4" ry="7" fill="#FFB020"/><ellipse class="chama" cx="12" cy="9" rx="2" ry="4.5" fill="#FFF3B0"/><rect x="7" y="16" width="10" height="24" rx="2" fill="#E9E3C8"/><rect x="11" y="11" width="2" height="6" fill="#3a3a3a"/></svg></div>';
+    var n = 24;
+    for(var i=0;i<n;i++) grid.insertAdjacentHTML('beforeend', svg);
+    function render(){ count.textContent = n; tag.textContent = n; }
+    render();
+    var frases = ['Vela acesa. A chama dura mais que a nossa campanha.','Mais uma vela. O velório segue lotado.','Obrigado. A Seleção agradece do além das quartas.','Que ela ilumine o caminho de volta pra casa. De novo.'];
+    var fi = 0;
+    function novaVela(){ if(grid.children.length < 140) grid.insertAdjacentHTML('beforeend', svg); n++; render(); }
+    btn.addEventListener('click', function(){
+      novaVela();
+      toast.textContent = frases[fi % frases.length]; fi++;
+    });
+    var recInput = document.getElementById('recadoInput');
+    var recBtn = document.getElementById('btnRecado');
+    var recados = document.getElementById('recados');
+    function enviar(){
+      var t = recInput.value.trim(); if(!t) return;
+      var el = document.createElement('div'); el.className = 'recado';
+      var p = document.createElement('p'); p.textContent = '“' + t + '”';
+      var s = document.createElement('span'); s.textContent = '— Você';
+      el.appendChild(p); el.appendChild(s); recados.appendChild(el);
+      recInput.value = ''; novaVela();
+      toast.textContent = 'Recado registrado. Uma vela por você também.';
+    }
+    recBtn.addEventListener('click', enviar);
+    recInput.addEventListener('keydown', function(e){ if(e.key === 'Enter') enviar(); });
+  })();
+
+  /* ---------- CRONÔMETRO REVERSO ---------- */
+  (function(){
+    var alvo = new Date(2030, 5, 8, 0, 0, 0); // Copa 2030 — data estimada (mês 5 = junho). Troque aqui se sair a oficial.
+    function pad(n){ return String(n).padStart(2,'0'); }
+    function tick(){
+      var diff = alvo - new Date(); if(diff < 0) diff = 0;
+      var t = Math.floor(diff/1000);
+      document.getElementById('rDias').textContent = Math.floor(t/86400);
+      document.getElementById('rHoras').textContent = pad(Math.floor((t%86400)/3600));
+      document.getElementById('rMin').textContent = pad(Math.floor((t%3600)/60));
+      document.getElementById('rSeg').textContent = pad(t%60);
+    }
+    tick(); setInterval(tick, 1000);
+  })();
+
+  /* ---------- REVEAL NO SCROLL ---------- */
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('on'); obs.unobserve(e.target); } });
+  }, {threshold:.15});
+  document.querySelectorAll('.reveal').forEach(function(el){ obs.observe(el); });
+</script>
+</body>
+</html>
